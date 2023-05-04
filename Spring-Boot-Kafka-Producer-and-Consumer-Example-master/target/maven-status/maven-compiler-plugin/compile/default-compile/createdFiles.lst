@@ -1,0 +1,6 @@
+com\netsurfingzone\config\SpringKafkaConfig.class
+com\netsurfingzone\consumer\KafkaConsumer.class
+com\netsurfingzone\dto\Student.class
+com\netsurfingzone\producer\KafkaProducer.class
+com\netsurfingzone\main\SpringMain.class
+com\netsurfingzone\constant\ApplicationConstant.class
