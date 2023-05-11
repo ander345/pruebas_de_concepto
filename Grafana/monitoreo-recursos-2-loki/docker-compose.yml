@@ -1,0 +1,47 @@
+version: "3.8"
+
+networks:
+  traefik-proxy:
+    external: true
+  loki:
+
+volumes:
+  grafana-data:
+  loki-data:
+
+services:
+  loki:
+    image: grafana/loki:2.0.0
+    container_name: grafana-loki
+    command: -config.file=/mnt/config/loki-config.yml
+    restart: unless-stopped
+    volumes:
+      - ./loki-config.yaml:/mnt/config/loki-config.yml
+      - loki-data:/loki
+    ports:
+      - 127.0.0.1:3100:3100
+    networks:
+      - loki
+
+  grafana:
+    image: grafana/grafana:7.2.2
+    container_name: grafana
+    restart: unless-stopped
+    volumes:
+      - grafana-data:/var/lib/grafana
+    expose:
+      - 3000
+    networks:
+      - loki
+      - traefik-proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.loki.loadbalancer.server.port=3000
+      - traefik.http.routers.loki.rule=Host(`loki.example.com`)
+      - traefik.http.routers.loki.tls.certresolver=le
+      - traefik.http.routers.loki.entrypoints=websecure
+      - traefik.docker.network=traefik-proxy
+
+
+
+    
