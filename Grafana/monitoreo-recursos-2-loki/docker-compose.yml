@@ -11,13 +11,13 @@ volumes:
 
 services:
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:7.2.2
     container_name: grafana
     restart: unless-stopped
     volumes:
       - grafana-data:/var/lib/grafana
     ports:
-      - 3000:3000
+      - "3000:3000"
     networks:
       - loki
 #    depends_on:
@@ -39,7 +39,7 @@ services:
       - ./loki-config.yaml:/etc/loki/loki-config.yaml
       - loki-data:/loki
     ports:
-      - 3100:3100
+      - "3100:3100"
     networks:
       - loki
     #command: -config.file=/mnt/config/loki-config.yml
@@ -60,7 +60,9 @@ services:
     image: grafana/promtail:2.7.0
     container_name: promtail
     volumes: 
+      - ./promtail-config.yaml:/etc/promtail/config.yaml
       - /var/log:/var/log
+    command: -config.file=/etc/promtail/config.yaml
     networks:
       - loki
 
@@ -85,6 +87,6 @@ services:
       options:
         loki-url: "http://localhost:3100/loki/api/v1/push"
     ports:
-      - 80:80
+      - "80:80"
     networks:
       - loki  
