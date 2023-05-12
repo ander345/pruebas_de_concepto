@@ -1,47 +1,90 @@
 version: "3.8"
 
 networks:
+  loki:
   traefik-proxy:
     external: true
-  loki:
 
 volumes:
   grafana-data:
   loki-data:
 
 services:
-  loki:
-    image: grafana/loki:2.0.0
-    container_name: grafana-loki
-    command: -config.file=/mnt/config/loki-config.yml
-    restart: unless-stopped
-    volumes:
-      - ./loki-config.yaml:/mnt/config/loki-config.yml
-      - loki-data:/loki
-    ports:
-      - 127.0.0.1:3100:3100
-    networks:
-      - loki
-
   grafana:
-    image: grafana/grafana:7.2.2
+    image: grafana/grafana:latest
     container_name: grafana
     restart: unless-stopped
     volumes:
       - grafana-data:/var/lib/grafana
-    expose:
-      - 3000
+    ports:
+      - 3000:3000
     networks:
       - loki
-      - traefik-proxy
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.loki.loadbalancer.server.port=3000
-      - traefik.http.routers.loki.rule=Host(`loki.example.com`)
-      - traefik.http.routers.loki.tls.certresolver=le
-      - traefik.http.routers.loki.entrypoints=websecure
-      - traefik.docker.network=traefik-proxy
+#    depends_on:
+#      - loki
+#    labels:
+#      - traefik.enable=true
+#      - traefik.http.services.loki.loadbalancer.server.port=3000
+#      - traefik.http.routers.loki.rule=Host(`loki.example.com`)
+#      - traefik.http.routers.loki.tls.certresolver=le
+#      - traefik.http.routers.loki.entrypoints=websecure
+#      - traefik.docker.network=traefik-proxy
 
-
-
+  loki:
+    image: grafana/loki:2.7.0
+    container_name: loki
+    restart: unless-stopped
+    volumes:
+      #- ./loki-config.yaml:/mnt/config/loki-config.yml
+      - ./loki-config.yaml:/etc/loki/loki-config.yaml
+      - loki-data:/loki
+    ports:
+      - 3100:3100
+    networks:
+      - loki
+    #command: -config.file=/mnt/config/loki-config.yml
+    command: -config.file=/etc/loki/loki-config.yaml
     
+#  promtail:
+#    container_name: promtail
+#    image: grafana/promtail:2.7.0
+#    volumes:
+#      - /var/log:/var/log
+#      - /root/promtailloki/promtail:/etc/promtail 
+#    command: -config.file=/etc/promtail/promtail-config.yaml
+#    networks:
+#      - loki
+
+  promtail_docker:
+          #docker run --name promtail -d -v /var/log:/var/log --link loki grafana/promtail:2.7.0
+    image: grafana/promtail:2.7.0
+    container_name: promtail
+    volumes: 
+      - /var/log:/var/log
+    networks:
+      - loki
+
+#  nginx:
+#    image: nginx
+#    #container_name: nginx
+#    restart: unless-stopped
+#    logging:
+#      driver: loki
+#      options:
+#        loki-url: "http://localhost:3100/loki/api/v1/push"  
+#    ports:
+#      - 80:80
+#    networks:
+#    - loki  
+
+  hello-world:
+    container_name:  hello-world
+    image: kerwood/hello-world
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+    ports:
+      - 80:80
+    networks:
+      - loki  
