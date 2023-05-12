@@ -73,6 +73,7 @@ si seleccionamos nos muestra una lista donde si le damos en container_name nos m
 en la parte superior derecha podemos darle live para ver en tiempo real los logs
 
 tambien hay una opcion de ver por el nombre del contenedor y darle click en **run query**
+
 >{container_name="hello-world"}
 
 o tambien filtrar 
@@ -81,6 +82,8 @@ o tambien filtrar
 >{container_name="nginx"} |= "GET"
 
 lo que esta dentro de las comillas es lo que vamos a filtrar en los logs 
+
+## notas: para la version 9.3.2 para ver los logs al lado de **run query** en **Absolute time range** seleccior una fecha para poder ver los logs
 
 recordar que para conectar estos logs solo instalamo el plugin y agregamos estas lineas en el docker del servicio
 ```
