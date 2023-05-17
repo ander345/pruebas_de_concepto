@@ -1,0 +1,69 @@
+version: "3.8"
+
+volumes:
+  grafana-data:
+  loki-data:
+  promtail-data:
+
+services:
+  grafana:
+    image: grafana/grafana:9.3.2
+    restart: unless-stopped
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: login
+
+  loki:
+    image: grafana/loki:2.7.0
+    restart: unless-stopped
+    volumes:
+      - ./loki-config.yaml:/etc/loki/loki-config.yaml
+      - loki-data:/loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/loki-config.yaml
+
+#linux
+  promtail_docker:
+    image: grafana/promtail:2.7.0
+    container_name: promtail
+    volumes: 
+      - /var/log:/var/log:ro    #carpetas que yo le paso a promtail
+      - /home/:/home_server:ro  #
+      - /root/:/root_user:ro    #al final se agrega el ro para que sean archivos de solo lectura "read only"
+      - ./promtail-config.yaml:/etc/promtail/config.yml
+      - promtail-data:/tmp
+    command: -config.file=/etc/promtail/config.yml
+
+#windows
+#  promtail_docker:
+#    image: grafana/promtail:2.7.0
+#    volumes:
+#      #- C:\Windows\System32\LogFiles:/var/log:ro
+#      - C:\Windows\System32\winevt\Logs:/var/log:ro
+#      #- C:\Users\01061:/home_server:ro
+#      #- C:\:/root_user:ro
+#      - ./promtail-config.yaml:/etc/promtail/config.yaml
+#      - promtail-data:/tmp    #se enumero el volumen
+#    #privileged: true
+#    command: -config.file=/etc/promtail/config.yaml
+##docker run -p 9080:9080 -v C:\promtail\config.yml:/etc/promtail/config.yml:ro -v C:\promtail\positions.yaml:/promtail-positions.yaml -v C:\Windows\System32\winevt\Logs:/var/log/windows:ro grafana/promtail:2.7.0
+
+## activar servidor, sin uno genera error el promtail debido a que para windows no toma los logs del sistema, para linux no es necesario
+
+  hello-world:
+    container_name:  hello-world
+    image: kerwood/hello-world
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+    ports:
+      - "80:80"
+
+#poder ejecutar este comando despues de intentar agregar loki en grafana para detallar como 
+# ya permite anexarlo
+#docker run -d --name nginx -p 80:80 --log-driver=loki --log-opt loki-url="http://localhost:3100/loki/api/v1/push"  nginx
