@@ -1,5 +1,5 @@
 
-![texto cualquiera por si no carga la imagen](url completa de la imagen)
+![arquitectura](https://github.com/ander345/pruebas_de_concepto/blob/main/Grafana/monitoreo-recursos-4-%20centralizado/arquitectura.png)
 
 # maestro 
 ## servidor central 
