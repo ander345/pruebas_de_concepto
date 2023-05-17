@@ -1,0 +1,28 @@
+global:
+  scrape_interval:     15s # El intervalo en el que se traera la metrica.
+  evaluation_interval: 15s # Evaluará las reglas cada 30 segundos, por defecto es cada minuto.
+
+scrape_configs:
+
+  - job_name: 'Prometheus_master'
+    honor_labels: true        # para que herede los labels de los esclavos
+    metrics_path: '/federate' # cada esclavo tiene un endpoint donde expone  todas las metricas
+    params:
+      'match[]':
+        - '{__name__=~".+"}'     # le dices que busques todos los jobs que tenga cada esclavo , incluso le puedo decir que busque por cAdvidor o node_exporter
+    static_configs:
+    # creo un target por cada esclavo
+    #--------------------------------------------#
+      - targets: [ 'localhost:9091']   # DEV, debe ser la ip y puerto 
+        labels:                               # con este label podemos saber que metrica o parametro viene de prometheus, podemos agregar o quitar label, nos sirve como filtros
+          pais: ES
+          entorno: DEV
+          cliente: block
+          hostname: dev-block-es
+      #---------------------------------------------#
+#      - targets: [ 'localhost:9097']   # QA
+#        labels:
+#          pais: ES
+#          entorno: QA
+#          cliente: block
+#          hostname: qa-block-es
