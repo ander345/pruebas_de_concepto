@@ -1,0 +1,145 @@
+version: "3.8"
+
+networks:
+  loki:
+
+volumes:
+  grafana-data:
+  loki-data:
+  promtail-data:
+  prometheus-data:
+
+services:
+  grafana:
+    #container_name: grafana
+    image: grafana/grafana:9.3.2
+    restart: unless-stopped
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: login
+    networks:
+      - loki
+      
+  prometheus:
+    image: prom/prometheus:v2.28.1
+    #container_name: prometheus
+    restart: unless-stopped
+    volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    - prometheus-data:/prometheus
+    ports:
+    - 9090:9090
+    command:
+    - '--config.file=/etc/prometheus/prometheus.yml'
+    - '--storage.tsdb.path=/prometheus'
+    - '--storage.tsdb.retention.time=1y'
+    - '--web.enable-lifecycle'
+    networks:
+      - loki
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    #container_name: node_exporter
+    restart: unless-stopped
+    ports:
+    - 9100:9100
+    ###### linux
+    # command:
+    # - '--path.rootfs=/host'
+    # pid: host
+    # volumes:
+    # - '/:/host:ro,rslave'
+    ###### windows
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+    command: 
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    networks:
+      - loki
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    #container_name: cadvisor
+    restart: unless-stopped
+    expose:
+    - 8080
+    volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - loki
+      
+  loki:
+    #container_name: loki
+    image: grafana/loki:2.7.0
+    restart: unless-stopped
+    volumes:
+      - ./loki-config.yaml:/etc/loki/loki-config.yaml
+      - loki-data:/loki
+    ports:
+      - "3100:3100"
+    networks:
+      - loki
+    command: -config.file=/etc/loki/loki-config.yaml
+
+#linux
+  promtail:
+    image: grafana/promtail:2.7.0
+    #container_name: promtail
+    volumes:
+      - C:\Windows\System32\winevt\Logs:/var/log 
+      - /var/log:/var/log    #carpetas que yo le paso a promtail
+      - /home/:/home_server  #
+      - /root/:/root_user    #al final se agrega el ro para que sean archivos de solo lectura "read only"
+      - ./promtail-config.yaml:/etc/promtail/config.yml
+      - promtail-data:/tmp
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - loki
+
+  nginx:
+    #container_name: nginx
+    image: nginx
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: job=dockerlogs,owner=recursos5,environment=development
+    ports:
+      - "80:80"
+    networks:
+      - loki
+
+  app_example:
+    image: quay.io/brancz/prometheus-example-app:v0.3.0
+    #container_name: app_example
+    restart: unless-stopped
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: job=dockerlogs,owner=recursos5,environment=development
+    ports:
+      - 81:8080
+    networks:
+      - loki
+
+
+  hello-world:
+    container_name:  hello-world
+    image: kerwood/hello-world
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+    ports:
+      - "82:80"
