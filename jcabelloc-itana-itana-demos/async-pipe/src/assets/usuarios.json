@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nombres": "Jorge Manuel",
+    "apellidos": "Perez Correa",
+    "email": "jorgemanuel@gmail.com"
+  },
+  {
+    "id": 2,
+    "nombres": "Jose Luis",
+    "apellidos": "Mendoza Porras",
+    "email": "joseluis@gmail.com"
+  },
+  {
+    "id": 3,
+    "nombres": "Marco Adrian",
+    "apellidos": "Medinal Pell",
+    "email": "marcoadrian@gmail.com"
+  },
+  {
+    "id": 4,
+    "nombres": "Julio Marino",
+    "apellidos": "Calvo Tire",
+    "email": "juliomarino@gmail.com"
+  }
+]

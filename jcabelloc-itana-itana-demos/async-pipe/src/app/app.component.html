@@ -1,0 +1,93 @@
+<br />
+<br />
+
+<select [(ngModel)]="tab" name="tab">
+  <option value="1">Ng If</option>
+  <option value="2">Ng For</option>
+  <option value="3">Ng If Loading</option>
+  <option value="4">Ng For Loading</option>
+</select>
+<div class="center">
+  <section *ngIf="tab == 1">
+    <div class="content-table">
+      <div>
+        <h1>Usuarios 1</h1>
+      </div>
+      <br />
+      <div *ngIf="usuario$ | async as usuario">
+        <p>ID: {{ usuario.id }}</p>
+        <p>Usuario: {{ usuario.nombres }}</p>
+        <p>Apellidos: {{ usuario.apellidos }}</p>
+        <p>Email: {{ usuario.email }}</p>
+      </div>
+    </div>
+  </section>
+  <section *ngIf="tab == 2">
+    <div class="content-table">
+      <div>
+        <h1>Usuarios</h1>
+      </div>
+      <table aria-describedby="Tabla de usuarios">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Nombres</th>
+            <th scope="col">Apellidos</th>
+            <th scope="col">Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let usuario of usuarios$ | async">
+            <th scope="row">{{ usuario.id }}</th>
+            <th scope="row">{{ usuario.nombres }}</th>
+            <th scope="row">{{ usuario.apellidos }}</th>
+            <th scope="row">{{ usuario.email }}</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section *ngIf="tab == 3">
+    <div class="content-table">
+      <div>
+        <h1>Usuario 1</h1>
+      </div>
+      <br />
+      <div *ngIf="usuario$ | async as usuario; else loading">
+        <p>ID: {{ usuario.id }}</p>
+        <p>Usuario: {{ usuario.nombres }}</p>
+        <p>Apellidos: {{ usuario.apellidos }}</p>
+        <p>Email: {{ usuario.email }}</p>
+      </div>
+    </div>
+  </section>
+  <section *ngIf="tab == 4" style="width: 1000px">
+    <div class="content-table">
+      <div>
+        <h1>Usuarios</h1>
+      </div>
+      <table aria-describedby="Tabla de usuarios">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Nombres</th>
+            <th scope="col">Apellidos</th>
+            <th scope="col">Email</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="usuarios$ | async as usuarios; else loading">
+          <tr *ngFor="let usuario of usuarios">
+            <th scope="row">{{ usuario.id }}</th>
+            <th scope="row">{{ usuario.nombres }}</th>
+            <th scope="row">{{ usuario.apellidos }}</th>
+            <th scope="row">{{ usuario.email }}</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<ng-template #loading>
+  <div class="lds-dual-ring"></div>
+</ng-template>

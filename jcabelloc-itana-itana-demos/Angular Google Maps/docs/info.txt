@@ -1,0 +1,9 @@
+Instalar Angular Google Maps (AGM)
+https://angular-maps.com/
+npm install @agm/core@1.1.0 --save
+
+
+Obtener API KEY
+https://developers.google.com/maps/documentation/javascript/get-api-key?hl=es-419
+* Se habilita Maps JavaScript API
+* Se generan las credenciales (API Key)

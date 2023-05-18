@@ -97,7 +97,7 @@ lo siguiente para evitar poner en cada contenedor la configuracion podemos hacer
 
 Cambiar el controlador de registro predeterminado
 Si desea cambiar el controlador de registro predeterminado para todos los contenedores, deberá editar `/etc/docker/daemon.json` y agregar las mismas opciones que en los ejemplos anteriores. Si el archivo ya contiene un objeto JSON con opciones de Docker, simplemente combine las propiedades del controlador de registro.
-
+para el caso de windows se agregan en configuracion -> docker engine
 ```
 {
   "log-driver": "loki",
@@ -106,7 +106,19 @@ Si desea cambiar el controlador de registro predeterminado para todos los conten
   }
 }
 ```
-en los que no se pone loki y ponemos localhost es por que esta por fuera y no puede resolverlo el dns de docker
+
+motas: 
+
+- si agregamos la configuracion anterior no tendremos que agregar en los contenedores de docker estas lineas:
+``` 
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+```
+
+- en la configuracion anterior depende de deonde se encuentre loki
+
+- en los que no se pone loki y ponemos localhost es por que esta por fuera y no puede resolverlo el dns de docker
 
 
-si no agregamos el container name, el docker nos pondra con un _1 y sera diferente del container_service 
+- si no agregamos el container name, el docker nos pondra con un _1 y sera diferente del container_service 

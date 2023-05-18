@@ -1,0 +1,22 @@
+<div>
+    <p>Download the PDF : pdfMake.createPdf(docDefinition).download();</p>
+    <button (click)="downloadPdf()">Download PDF</button>
+</div>
+
+<div>
+    <p>Open the PDF in new window : pdfMake.createPdf(docDefinition).open();</p>
+    <button (click)="openPdf()">Open PDF - new Window</button>
+</div>
+
+<div>
+    <p>Open PDF in same window : pdfMake.createPdf(docDefinition).open(.. , window);</p>
+    <button (click)="openSameWindowPdf()">Open PDF - same Window</button>
+</div>
+
+<div>
+    <p>Print the PDF: pdfMake.createPdf(docDefinition).print();</p>
+    <button (click)="printPdf()">Print PDF</button>
+</div>
+
+
+

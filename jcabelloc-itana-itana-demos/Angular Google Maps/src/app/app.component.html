@@ -1,0 +1,12 @@
+<div class="container">
+  <agm-map class="mapa" [latitude]="ubicacionCentral.latitud" [longitude]="ubicacionCentral.longitud" [zoom]="12" (mapClick)="mapClicked($event)">
+    <agm-marker *ngFor="let coord of coordenadas" [latitude]="coord.latitud" [longitude]="coord.longitud">
+      <agm-info-window>
+        <div>
+            <p>La latitud del punto marcado es : {{coord?.latitud}}</p>
+            <p>La longitud del punto marcado es : {{coord?.longitud}}</p>
+        </div>
+      </agm-info-window>
+    </agm-marker>
+  </agm-map>
+</div>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1037884746199",
+    "firebase_url": "https://authentication-220a9.firebaseio.com",
+    "project_id": "authentication-220a9",
+    "storage_bucket": "authentication-220a9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037884746199:android:e8e542033b8d65bfbdc392",
+        "android_client_info": {
+          "package_name": "pe.upc.authentication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1037884746199-h0qeqb4crs67u918j9286q89ssfoop4h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8Qbu_Z_cH1SC9EsfAYOnPeoaQqRBqa_w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1037884746199-h0qeqb4crs67u918j9286q89ssfoop4h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -57,7 +57,7 @@ sin puerto debido a que la imagen esta en el puerto 80
 localhost/metrics
 http://localhost/metrics.
 
-## servidor de promisius
+## servidor de prometheus
 localhost:9090/targets
 #### tener en cuenta los labels en los jobs
 
@@ -71,7 +71,7 @@ localhost:3000
 
 **pass:admin
 
-# conectar promisius con grafana
+# conectar prometheus con grafana
  em grafana vamos a `data source` que esta en configuracion, añadimos una fuente, en este caso  `prometheus`
 
 donde dice URL simplemente agregamos `prometheus:9090`, es asi de simple debido a que para este ejemplo esta dentro del mismo docker composer (red) el lo resuelve solo el dns. damos a guardar
