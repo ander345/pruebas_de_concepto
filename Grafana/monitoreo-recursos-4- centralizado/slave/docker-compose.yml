@@ -1,0 +1,111 @@
+version: "3.8"
+
+volumes:
+  prometheus-data:
+  promtail-data:
+
+services:
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: slave_node_exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    env_file:
+      - .env
+    logging:
+      driver: loki
+      options:
+        loki-url: "${lokiURL}/loki/api/v1/push"
+    ###### linux
+#    command:
+#      - '--path.rootfs=/host'
+#    pid: host
+#    volumes:
+#      - '/:/host:ro,rslave'
+    ###### windows
+    command: 
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    pid: host
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+
+  prometheus:
+    image: prom/prometheus:v2.30.0
+    container_name: slave_prometheus
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9091:9090"
+    logging:
+      driver: loki
+      options:
+        loki-url: "${lokiURL}/loki/api/v1/push"
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: slave_cadvisor
+    restart: unless-stopped
+    env_file:
+      - .env
+    #expose:
+    #  - 8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    logging:
+      driver: loki
+      options:
+        loki-url: "${lokiURL}/loki/api/v1/push"
+
+  #linux promtail
+  promtail:
+    image: grafana/promtail:2.7.0
+    container_name: slave_promtail
+    env_file:
+      - .env
+    volumes: 
+      - /var/log:/var/log:ro    #carpetas que yo le paso a promtail
+      - /home/:/home_server:ro  #
+      - /root/:/root_user:ro    #al final se agrega el ro para que sean archivos de solo lectura "read only"
+      - ./promtail-config.yaml:/etc/promtail/config.yml
+      #- ./positions.yaml:/tmp/positions.yaml
+      - promtail-data:/tmp
+    command: -config.file=/etc/promtail/config.yml -config.expand-env=true #env vars
+    logging:
+      driver: loki
+      options:
+        loki-url: "${lokiURL}/loki/api/v1/push"
+
+## activar servidor, sin uno genera error el promtail debido a que para windows no toma los logs del sistema, para linux no es necesario
+
+  nginx:
+    container_name: slave_nginx
+    image: nginx
+    env_file:
+      - .env
+    logging:
+      driver: loki
+      options:
+        loki-url: "${lokiURL}/loki/api/v1/push"
+    ports:
+      - "82:80"
+
+  app_example:
+    image: quay.io/brancz/prometheus-example-app:v0.3.0
+    container_name: app_example
+    restart: unless-stopped
+    ports:
+    - 83:8080

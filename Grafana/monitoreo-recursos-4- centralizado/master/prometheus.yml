@@ -13,16 +13,16 @@ scrape_configs:
     static_configs:
     # creo un target por cada esclavo
     #--------------------------------------------#
-      - targets: [ 'localhost:9091']   # DEV, debe ser la ip y puerto 
+      - targets: [ '10.0.0.67:9091']   # DEV, debe ser la ip y puerto 
         labels:                               # con este label podemos saber que metrica o parametro viene de prometheus, podemos agregar o quitar label, nos sirve como filtros
           pais: ES
           entorno: DEV
           cliente: block
           hostname: dev-block-es
       #---------------------------------------------#
-#      - targets: [ 'localhost:9097']   # QA
-#        labels:
-#          pais: ES
-#          entorno: QA
-#          cliente: block
-#          hostname: qa-block-es
+      - targets: [ 'localhost:9097']   # QA
+        labels:
+          pais: ES
+          entorno: QA
+          cliente: block
+          hostname: qa-block-es
