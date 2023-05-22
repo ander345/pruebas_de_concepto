@@ -1,0 +1,8 @@
+*.exe
+VERSION
+*.swp
+*.un~
+output/
+.vscode
+.idea
+*.syso
