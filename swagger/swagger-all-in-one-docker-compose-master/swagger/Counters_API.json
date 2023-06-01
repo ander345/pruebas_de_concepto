@@ -1,0 +1,126 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "Swagger API documentation for Counters",
+    "version" : "2.0",
+    "title" : "CountersService Swagger Documentation",
+    "x-WM-SERVICE_ID" : "Counters",
+    "x-WM-SERVICE_TYPE" : "JavaService"
+  },
+  "basePath" : "/",
+  "tags" : [ {
+    "name" : "CountersController",
+    "description" : "controller class for java service execution",
+    "x-WM-FULLY_QUALIFIED_NAME" : "com.blocknitive.asentify.counters.controller.CountersController",
+    "x-WM-VERSION" : "",
+    "x-WM-CONTROLLER_NAME" : "Counters"
+  } ],
+  "schemes" : [ "http", "https" ],
+  "paths" : {
+    "/counters/numEvidencesCorrected" : {
+      "get" : {
+        "tags" : [ "CountersController" ],
+        "operationId" : "CountersController_getNumEvidencesCorrected",
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/NumEvidencesCorrectedResponse",
+              "x-WM-TYPE_ARGUMENTS" : [ ]
+            }
+          }
+        },
+        "x-WM-METHOD_NAME" : "getNumEvidencesCorrected",
+        "x-WM-ACCESS_SPECIFIER" : "APP_ONLY"
+      },
+      "x-WM-BASE_PATH" : "/counters",
+      "x-WM-TAG" : "CountersController",
+      "x-WM-RELATIVE_PATH" : "/numEvidencesCorrected",
+      "x-WM-COMPLETE_PATH" : "/counters/numEvidencesCorrected"
+    },
+    "/counters/numIncidencesToday" : {
+      "get" : {
+        "tags" : [ "CountersController" ],
+        "operationId" : "CountersController_getNumIncidencesToday",
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/NumIncidencesTodayResponse",
+              "x-WM-TYPE_ARGUMENTS" : [ ]
+            }
+          }
+        },
+        "x-WM-METHOD_NAME" : "getNumIncidencesToday",
+        "x-WM-ACCESS_SPECIFIER" : "APP_ONLY"
+      },
+      "x-WM-BASE_PATH" : "/counters",
+      "x-WM-TAG" : "CountersController",
+      "x-WM-RELATIVE_PATH" : "/numIncidencesToday",
+      "x-WM-COMPLETE_PATH" : "/counters/numIncidencesToday"
+    },
+    "/counters/numProcessesExecutionByState" : {
+      "get" : {
+        "tags" : [ "CountersController" ],
+        "operationId" : "CountersController_getNumProcessesExecutionByState",
+        "parameters" : [ {
+          "name" : "processState",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "x-WM-EDITABLE" : true,
+          "x-WM-UUID" : "4954e129-6460-4f8a-b5fd-ed9b2add4972",
+          "x-WM-FULLY_QUALIFIED_TYPE" : "java.lang.String",
+          "x-WM-ORIGINAL-NAME" : "processState"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/NumProcessesByStateResponse",
+              "x-WM-TYPE_ARGUMENTS" : [ ]
+            }
+          }
+        },
+        "x-WM-METHOD_NAME" : "getNumProcessesExecutionByState",
+        "x-WM-ACCESS_SPECIFIER" : "APP_ONLY"
+      },
+      "x-WM-BASE_PATH" : "/counters",
+      "x-WM-TAG" : "CountersController",
+      "x-WM-RELATIVE_PATH" : "/numProcessesExecutionByState",
+      "x-WM-COMPLETE_PATH" : "/counters/numProcessesExecutionByState"
+    }
+  },
+  "definitions" : {
+    "NumProcessesByStateResponse" : {
+      "properties" : {
+        "total" : {
+          "type" : "integer",
+          "format" : "int64"
+        }
+      },
+      "x-WM-FULLY_QUALIFIED_NAME" : "com.blocknitive.asentify.asentify1.models.query.NumProcessesByStateResponse",
+      "x-WM-TAGS" : [ "CountersController" ]
+    },
+    "NumIncidencesTodayResponse" : {
+      "properties" : {
+        "total" : {
+          "type" : "integer",
+          "format" : "int64"
+        }
+      },
+      "x-WM-FULLY_QUALIFIED_NAME" : "com.blocknitive.asentify.asentify1.models.query.NumIncidencesTodayResponse",
+      "x-WM-TAGS" : [ "CountersController" ]
+    },
+    "NumEvidencesCorrectedResponse" : {
+      "properties" : {
+        "total" : {
+          "type" : "integer",
+          "format" : "int64"
+        }
+      },
+      "x-WM-FULLY_QUALIFIED_NAME" : "com.blocknitive.asentify.asentify1.models.query.NumEvidencesCorrectedResponse",
+      "x-WM-TAGS" : [ "CountersController" ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "express-ts-swagger-docker",
+  "version": "0.0.2",
+  "description": "Express.js TypeScript template with Swagger UI and Docker Compose",
+  "main": "src/main.ts",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.28",
+    "tslint": "^5.20.0",
+    "tsoa": "^2.5.13",
+    "typescript": "^3.8.2"
+  },
+  "scripts": {
+    "build:routes": "mkdir -p src/routes && tsoa routes",
+    "build:swagger": "tsoa swagger",
+    "build:ts": "tsc -p src",
+    "build:all": "npm run build:routes && npm run build:swagger && npm run build:ts",
+    "server": "node dist/main.js",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/aerabi/express-ts-swagger-docker.git"
+  },
+  "keywords": [
+    "expressjs",
+    "typescript"
+  ],
+  "author": "Mohammad-Ali A'RÂBI <aerabi@gmx.de>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aerabi/express-ts-swagger-docker/issues"
+  },
+  "homepage": "https://github.com/aerabi/express-ts-swagger-docker#readme"
+}

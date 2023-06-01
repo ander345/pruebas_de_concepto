@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mapa Interactivo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <script src="js/jquery-3.2.0.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/miEstilo.css">
+    <script src="js/sweetalert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/sweetalert.css">
+</head>
+
+<body>
+    <div id="left-panel">
+        <div class="from-to">
+            <div class="medios"> <span class="input-label">Buscar:</span>
+                <input id="direccion" type="textbox" value="" placeholder="Ingresa una dirección &#9166">
+            </div>
+            <div class="select-circle">
+                <div class="circle from">
+                    <span class="input-label">Desde:</span>
+                    <input type="textbox" id="desde" placeholder="Ingresa una dirección  &#9166">
+                </div>
+                <div class="circle to">
+                    <span class="input-label">Hasta:</span>
+                    <input type="textbox" id="hasta" placeholder="Ingresa una dirección &#9166">
+                </div>
+            </div>
+        </div>
+        <div class="input-choose">
+            <div class="medios"> <span class="input-label">Lugar:</span>
+                <select id="tipoDeLugar">
+                    <option value="">Elegir tipo de lugar</option>
+                </select>
+            </div>
+            <div class="medios"> <span class="input-label">Como:</span>
+                <select id="comoIr">
+                    <option value='DRIVING'> Auto </option>
+                    <option value='WALKING'> Caminando </option>
+                    <option value='TRANSIT'> Transporte Público </option>
+                </select>
+            </div>
+            <div class="hide-xs">
+                <div class='agregarPts'>
+                    <span class="input-label">Agregar:</span>
+                    <input type="textbox" id="agregar" placeholder="Ingresa una dirección &#9166">
+                </div>
+                <label id="labelIntermedios">Lugares Intermedios
+                    <br>
+                    <i>(Hacé Ctrl-Click para seleccionar varios)</i> </label>
+                <div class="intermedios">
+                    <div class="arrows">
+                        <div class="up">
+                            <input type="button" value="Up" class="btn btn-default"> </div>
+                        <div class="down">
+                            <input type="button" value="down" class="btn btn-default">
+                        </div>
+                    </div>
+                    <select multiple id="puntosIntermedios" class="lugares">
+                    </select>
+                </div>
+                <div class="radio-metros">
+                    <label for="radio">Radio</label>
+                    <input type="range" id="radio" min="100" value="3000" max="5000" step="100" class="slider">
+                    <output for="radio" id="radioS">3000 mts</output>
+                </div>
+                <div>
+                </div>
+            </div>
+            <input type="submit" id="calcularMuchos" value="Calcular Ruta" class="btn btn-outline">
+            <button class="btn btn-outline" onclick="mostrarOcultarPano()">Ocultar/Mostrar StreetView</button>
+        </div>
+        <div class="directions">
+            <div id='directions-panel-summary'> </div>
+            <div id='directions-panel'> </div>
+        </div>
+    </div>
+    </div>
+    <div id="map"></div>
+    <div id="pano"></div>
+    <script src='js/geocodificador.js'></script>
+    <script src='js/marcador.js'></script>
+    <script src='js/streetView.js'></script>
+    <script src='js/direcciones.js'></script>
+    <script src='js/lugares.js'></script>
+    <script src='js/ayuda.js'></script>
+    <script src='js/apis.js'></script>
+    <!-- Modificá "CLAVEAPI" por la clave que hayas obtenido -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyDuBEidKGDuQo7Bzf1uRg47MPaRRlEesw0&libraries=places&callback=inicializarMapa"
+        async defer></script>
+</body>
+
+</html>

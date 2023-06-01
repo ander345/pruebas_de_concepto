@@ -1,0 +1,21 @@
+version: "3.2"
+services:
+  web:
+    image: aerabi/express-ts
+    build: .
+    ports:
+     - "3000:3000"
+    environment:
+      NODE_ENV : docker
+    #volumes:
+    # - .:/usr/src/app
+  swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8080:8080"
+    environment:
+      SWAGGER_JSON: /swagger/swagger.json
+    volumes:
+      - type: bind
+        source: ./dist
+        target: /swagger
