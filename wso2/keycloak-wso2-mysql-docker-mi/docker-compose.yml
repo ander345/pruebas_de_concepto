@@ -1,0 +1,186 @@
+# Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: '3.9'
+
+networks: 
+  keycloak-wso2-net:
+  
+
+volumes:
+  postgres_data:
+      driver: local
+  mysql-volume:
+  #pga_data:
+
+services:
+
+  #pgadmin:
+  #  image: dpage/pgadmin4:7.3
+  #  container_name: pgadmin
+  #  restart: always
+  #  depends_on:
+  #    - keycloak-db
+  #  environment:
+  #    PGADMIN_DEFAULT_EMAIL: jose.casas@blocknitive.com
+  #    PGADMIN_DEFAULT_PASSWORD: root
+  #  ports:
+  #    - "5050:80"
+  #  networks:
+  #    - keycloak-wso2-net
+  #  volumes:
+  #    - pga_data:/var/lib/pgadmin
+  #  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      MYSQL_ROOT_PASSWORD: root 
+    restart: always
+    ports:
+      - 4283:80
+    depends_on:
+      - mysql  
+    networks:
+      - keycloak-wso2-net
+      
+#WSO2
+  mysql:
+    image: mysql:5.7.41
+    container_name: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_USER: wso2carbon
+      MYSQL_PASSWORD: wso2carbon
+      #MYSQL_DATABASE: apimanager_db
+      # Self-Explanatory
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./conf/mysql/scripts:/docker-entrypoint-initdb.d
+      - ./conf/mysql/conf/my.cnf:/etc/mysql/my.cnf
+      #forma 2
+      #- ./path/to/file/keycloak_exported.sql:/docker-entrypoint-initdb.d/db.sql
+      #- mysql-volume:/var/lib/mysql
+      #or 
+      #- ./db-folder-data:/var/lib/mysql      
+    ulimits:
+      nofile:
+        soft: 20000
+        hard: 40000
+    command: [--ssl=0]
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-u root", "-proot"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+    networks:
+      - keycloak-wso2-net
+
+  api-manager:
+    build: ./dockerfiles/apim
+    labels:
+      name: wso2
+    restart: always
+    healthcheck:
+      #test: ["CMD", "nc", "-z","localhost", "9443"]
+      test: ["CMD", "nc", "-z","localhost", "9443"]
+      interval: 10s
+      start_period: 180s
+      retries: 20
+    depends_on:
+      mysql:
+        condition: service_healthy
+        #condition: service_completed_successfully
+    volumes:
+      - ./conf/apim:/home/wso2carbon/wso2-config-volume
+    ports:
+      - "9443:9443"
+      - "8280:8280"
+      - "8243:8243"
+      - "11111:11111"
+      - "5672:5672"
+      - "9099:9099"
+      - "9611:9611"
+      - "9711:9711"
+      - "9763:9763"
+      - "9999:9999"
+    networks:
+      - keycloak-wso2-net
+
+  micro-integrator:
+    build: ./dockerfiles/mi
+    restart: always
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "8253"]
+      interval: 10s
+      start_period: 30s
+      retries: 10
+    depends_on:
+      mysql:
+        condition: service_healthy
+        #condition: service_completed_successfully
+      api-manager:
+        condition: service_healthy
+    volumes:
+      - ./conf/mi:/home/wso2carbon/wso2-config-volume
+    ports:
+      - "8290:8290"
+      - "8253:8253"
+    networks:
+      - keycloak-wso2-net
+
+#KEYCLOAK
+  keycloak-db:
+    image: postgres:14-alpine
+    container_name: keycloak-db
+    restart: always
+    volumes: 
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - keycloak-wso2-net
+    ports:
+      - "25432:5432"
+    environment:
+      POSTGRES_DB:       keycloak
+      POSTGRES_USER:     keycloak
+      POSTGRES_PASSWORD: password
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    restart: always
+    depends_on:
+      - keycloak-db
+    command: start-dev
+    networks:
+      - keycloak-wso2-net
+    ports:
+      - "8180:8080"
+    environment:
+      DB_VENDOR:   POSTGRES
+      DB_ADDR:     keycloak-db
+      DB_PORT:     5432
+      DB_DATABASE: keycloak
+      DB_USER:     keycloak
+      DB_SCHEMA:   public
+      DB_PASSWORD: password
+      KEYCLOAK_ADMIN:     admin
+      KEYCLOAK_ADMIN_PASSWORD: admin

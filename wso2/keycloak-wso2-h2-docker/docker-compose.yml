@@ -1,0 +1,90 @@
+version: '3.9'
+
+networks: 
+  keycloak-wso2-net:
+  
+volumes:
+  postgres_data:
+      driver: local
+
+services:      
+#WSO2
+  postgres-db:
+    image: postgres:14-alpine
+    container_name: postgress-db
+    restart: always
+    volumes: 
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - keycloak-wso2-net
+    ports:
+      - "25432:5432"
+    environment:
+      POSTGRES_DB:       keycloak
+      POSTGRES_USER:     keycloak
+      POSTGRES_PASSWORD: password
+
+  api-manager:
+    build: ./dockerfiles/apim
+    container_name: api-manager
+    labels:
+      name: wso2
+    restart: always
+    healthcheck:
+      test: ["CMD", "nc", "-z","localhost", "9443"]
+      interval: 10s
+      start_period: 180s
+      retries: 20
+    ports:
+      - "9443:9443"
+      - "8280:8280"
+      - "8243:8243"
+      - "11111:11111"
+      - "5672:5672"
+      - "9099:9099"
+      - "9611:9611"
+      - "9711:9711"
+      - "9763:9763"
+      - "9999:9999"
+    networks:
+      - keycloak-wso2-net
+
+#KEYCLOAK
+  #keycloak-db:
+  #  image: postgres:14-alpine
+  #  container_name: keycloak-db
+  #  restart: always
+  #  volumes: 
+  #    - postgres_data:/var/lib/postgresql/data
+  #  networks:
+  #    - keycloak-wso2-net
+  #  ports:
+  #    - "25432:5432"
+  #  environment:
+  #    POSTGRES_DB:       keycloak
+  #    POSTGRES_USER:     keycloak
+  #    POSTGRES_PASSWORD: password
+
+  #keycloak:
+  #  #image: quay.io/keycloak/keycloak:21.1.1
+  #  #image: jboss/keycloak:9.0.3
+  #  image: quay.io/keycloak/keycloak:19.0
+  #  container_name: keycloak
+  #  restart: always
+  #  depends_on:
+  #    - keycloak-db
+  #  command: start-dev
+  #  networks:
+  #    - keycloak-wso2-net
+  #  ports:
+  #    - "8180:8080"
+  #  environment:
+  #    DB_VENDOR:   POSTGRES
+  #    DB_ADDR:     keycloak-db
+  #    DB_PORT:     5432
+  #    DB_DATABASE: keycloak
+  #    DB_USER:     keycloak
+  #    DB_SCHEMA:   public
+  #    DB_PASSWORD: password
+  #    KEYCLOAK_ADMIN:     admin
+  #    KEYCLOAK_ADMIN_PASSWORD: admin
