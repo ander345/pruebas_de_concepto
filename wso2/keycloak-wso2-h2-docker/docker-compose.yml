@@ -9,32 +9,43 @@ volumes:
 
 services:      
 #WSO2
-  postgres-db:
+  postgres:
     image: postgres:14-alpine
-    container_name: postgress-db
+    container_name: postgres
     restart: always
-    volumes: 
-      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - keycloak-wso2-net
     ports:
-      - "25432:5432"
+      - "5432:5432"
     environment:
-      POSTGRES_DB:       keycloak
-      POSTGRES_USER:     keycloak
-      POSTGRES_PASSWORD: password
-
+      POSTGRES_DB:       WSO2AM_DB
+      POSTGRES_USER:     wso2carbon
+      POSTGRES_PASSWORD: wso2carbon
+    volumes: 
+      - postgres_data:/var/lib/postgresql/data
+      - ./bd:/home/wso2carbon/repository/components/lib/
+      
   api-manager:
     build: ./dockerfiles/apim
     container_name: api-manager
     labels:
       name: wso2
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: always
     healthcheck:
       test: ["CMD", "nc", "-z","localhost", "9443"]
       interval: 10s
       start_period: 180s
       retries: 20
+    volumes: 
+      - ./conf:/home/wso2carbon/repository/conf
     ports:
       - "9443:9443"
       - "8280:8280"
