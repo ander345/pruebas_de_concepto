@@ -1,15 +1,27 @@
-version: '3.9'
+version: '3'
 
-networks: 
-  keycloak-wso2-net:
-  
 volumes:
-  my-db:
   postgres_data:
       driver: local
+  datadb:
+  pg_admin:
 
 services:      
 #WSO2
+  pgadmin:
+    image: dpage/pgadmin4:7.3
+    container_name: pgadmin
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: jose.casas@blocknitive.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    volumes:
+      - pg_admin:/var/lib/pgadmin
+      
   postgres:
     image: postgres:14-alpine
     container_name: postgres
@@ -19,77 +31,44 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - keycloak-wso2-net
     ports:
       - "5432:5432"
     environment:
+      POSTGRES_ROOT_USER:     postgres
+      POSTGRES_ROOT_PASSWORD: postgres
       POSTGRES_DB:       WSO2AM_DB
       POSTGRES_USER:     wso2carbon
       POSTGRES_PASSWORD: wso2carbon
     volumes: 
       - postgres_data:/var/lib/postgresql/data
-      - ./bd:/home/wso2carbon/wso2am-4.2.0/repository/components/lib/
-
-  #mysql:
-  #  image: mysql:5.7.41
-  #  container_name: mysql
-  #  ports:
-  #    - 3306
-  #  restart: always
-  #  environment:
-  #    MYSQL_ROOT_PASSWORD: root
-  #    MYSQL_DATABASE: WSO2AM_DB
-  #    MYSQL_USER:     wso2carbon
-  #    MYSQL_PASSWORD: wso2carbon  
-  #  volumes:
-  #    #- my-db:/var/lib/mysql
-  #    - ./bd/mysql/scripts:/docker-entrypoint-initdb.d
-  #    - ./bd/mysql/conf/my.cnf:/etc/mysql/my.cnf
-  #  ulimits:
-  #    nofile:
-  #      soft: 20000
-  #      hard: 40000
-  #  command: [--ssl=0]
-  #  healthcheck:
-  #    test: ["CMD", "mysqladmin" ,"ping", "-uroot", "-proot"]
-  #    interval: 60s
-  #    timeout: 70s
-  #    retries: 5
-  #    start_period: 80s
-  #  networks:
-  #    - keycloak-wso2-net
-          
+      - ./db/postgres/postgresql_share.sql:/var/lib/postgresql/postgresql_share.sql
+      - ./db/postgres/postgresql-mb.sql:/var/lib/postgresql/postgresql-mb.sql
+      - ./db/postgres/postgresql.sql:/var/lib/postgresql/postgresql.sql
+      - ./db/postgres/postgresql_share.sql:/docker-entrypoint-initdb.d/postgresql_share.sql
+      - ./db/postgres/postgresql-mb.sql:/docker-entrypoint-initdb.d/postgresql-mb.sql
+      - ./db/postgres/postgresql.sql:/docker-entrypoint-initdb.d/postgresql.sql
   api-manager:
-    build: ./dockerfiles/apim
+    build: ./
     container_name: api-manager
     labels:
       name: wso2
-    depends_on:
-      postgres:
-        condition: service_healthy
     restart: always
     healthcheck:
       test: ["CMD", "nc", "-z","localhost", "9443"]
-      interval: 25s
+      interval: 10s
       start_period: 180s
       retries: 20
     volumes: 
       - ./conf/deployment.toml:/home/wso2carbon/wso2am-4.2.0/repository/conf/deployment.toml
-      - ./bd:/home/wso2carbon/wso2am-4.2.0/repository/components/lib/
+      - ./db/connector/postgresql-42.6.0.jar:/home/wso2carbon/wso2am-4.2.0/repository/components/lib/postgresql-42.6.0.jar
+      - ./db/connector/postgresql-42.6.0.jar:/home/wso2carbon/wso2am-4.2.0/repository/components/dropins/postgresql-42.6.0.jar
+      #- datadb:/home/wso2carbon/wso2am-4.2.0/repository/database
+      #- ./conf/master-datasources.xml:/home/wso2carbon/wso2am-4.2.0/repository/conf/datasources/master-datasources.xml
+                                        
     ports:
       - "9443:9443"
       - "8280:8280"
       - "8243:8243"
-      - "11111:11111"
-      - "5672:5672"
-      - "9099:9099"
-      - "9611:9611"
-      - "9711:9711"
-      - "9763:9763"
-      - "9999:9999"
-    networks:
-      - keycloak-wso2-net
 
 #KEYCLOAK
   #keycloak-db:
@@ -98,8 +77,6 @@ services:
   #  restart: always
   #  volumes: 
   #    - postgres_data:/var/lib/postgresql/data
-  #  networks:
-  #    - keycloak-wso2-net
   #  ports:
   #    - "25432:5432"
   #  environment:
@@ -116,8 +93,6 @@ services:
   #  depends_on:
   #    - keycloak-db
   #  command: start-dev
-  #  networks:
-  #    - keycloak-wso2-net
   #  ports:
   #    - "8180:8080"
   #  environment:

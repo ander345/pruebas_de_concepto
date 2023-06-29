@@ -14,18 +14,20 @@ create_admin_account = true
 type = "database_unique_id"
 
 [database.apim_db]
-type = "postgres"
-url = "jdbc:postgresql://postgres:5432/WSO2AM_DB?autoReconnect=true&amp;useSSL=false"
+type = "postgre"
+url = "jdbc:postgresql://postgres:5432/WSO2AM_DB"
 username = "wso2carbon"
 password = "wso2carbon"
 driver = "org.postgresql.Driver"
+validationQuery = "SELECT 1"
 
 [database.shared_db]
-type = "postgres"
-url = "jdbc:postgresql://postgres:5432/WSO2AM_SHARED_DB?autoReconnect=true&amp;useSSL=false"
+type = "postgre"
+url = "jdbc:postgresql://postgres:5432/WSO2AM_SHARED_DB"
 username = "wso2carbon"
 password = "wso2carbon"
 driver = "org.postgresql.Driver"
+validationQuery = "SELECT 1"
 
 [keystore.tls]
 file_name =  "wso2carbon.jks"
