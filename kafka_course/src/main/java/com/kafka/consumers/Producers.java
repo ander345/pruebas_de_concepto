@@ -5,11 +5,17 @@ import java.util.Properties;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Producers {
 
+	public static final Logger log = LoggerFactory.getLogger(Producers.class);
+	
 	public static void main(String[] args) {
 
+		long startTime = System.currentTimeMillis();
+		
 		Properties props=new Properties();
 		props.put("bootstrap.servers","localhost:9092");// Broker de kafka al que nos vamos a conectar
 		props.put("acks","all");// se puede poner 1 o 2 referente al broker
@@ -24,14 +30,28 @@ public class Producers {
 		"org.apache.kafka.common.serialization.StringSerializer");
 		
 		/**
-		 * ejemplo simple
+		 * ejemplo simple 1
+		 */
+		/*try(Producer<String, String> producer = new	KafkaProducer<>(props)) {
+			producer.send(new ProducerRecord<String, String>("devs4j-topic","devsj-key", "devs4j-value"));
+		}*/
+		
+		/**
+		 * ejemplo simple 2, es un envio de forma asincrona, no llegaran en orden, si agrego un .get() seria syncrono
+		 * tener en cuenta que se debe tener encuenta por el performance
 		 */
 		try(Producer<String, String> producer = new	KafkaProducer<>(props)) {
-			producer.send(new ProducerRecord<String, String>("devs4j-topic","devsj-key", "devs4j-value"));
+			for(int i= 0;i< 10000;i++) {
+				producer.send(new ProducerRecord<String, String>("devs4j-topic",String.valueOf(i), "devs4j-value"));
+			}
+			producer.flush();
 		}
 		
+		log.info("processing time = {} ms ", (System.currentTimeMillis()-startTime));
 		
-		/*try(Producer<String, String> producer = new	KafkaProducer<>(props)) {
+		
+		
+		/*try(Producer<String, String> producer = new	Kafk aProducer<>(props)) {
 			try{
 				producer.initTransactions();
 				producer.beginTransaction();
@@ -45,8 +65,7 @@ public class Producers {
 				producer.commitTransaction();
 			}catch(Exception e) {
 				producer.abortTransaction();
-				System.out.println("Error processing messages");
-				//log.error("Error processing messages",e);
+				log.error("Error processing messages",e);
 			}
 		}*/
 	}
