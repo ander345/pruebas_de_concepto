@@ -1,0 +1,18 @@
+
+
+ng-web corresponde al proyecto (workspace normal sin nada) que tiene 2 librerias 
+tooltip  es una libreria que me da una libreria para hacer un tools
+utils  como un utilitario
+
+y ng-web-demo es un proyecto normal de angular
+y para saber que se esta usando es simple, en el app.module.ts esta el UtilModule, TooltipModule
+
+
+
+
+**ng-web es la libreria se puede compilar con:** por probar
+ng build @ng-web/util
+
+se compila con ng serve
+
+los que se publican en el npm es en la carpeta dist/ng-web que se crea cuando se compila
