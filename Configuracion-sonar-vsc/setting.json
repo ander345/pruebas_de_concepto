@@ -1,0 +1,60 @@
+{
+    "mssql.connections": [
+        {
+            "server": "{{put-server-name-here}}",
+            "database": "{{put-database-name-here}}",
+            "user": "{{put-username-here}}",
+            "password": "{{put-password-here}}"
+        }
+    ],
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "java.project.importOnFirstTimeStartup": "automatic",
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    },
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "oracledevtools.bookmarkFileFolder": "C:\\Users\\anderson\\Oracle\\oracle.oracledevtools",
+    "oracledevtools.connectionConfiguration.configFilesFolder": "C:\\Users\\anderson\\Oracle\\network\\admin",
+    "oracledevtools.connectionConfiguration.walletFileFolder": "C:\\Users\\anderson\\Oracle\\network\\admin",
+    "oracledevtools.download.otherFolder": "C:\\Users\\anderson\\downloads",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "bracket-pair-colorizer-2.depreciation-notice": false,
+    "redhat.telemetry.enabled": true,
+    "aws.profile": "profile:default",
+    "editor.suggest.showMethods": true,
+    "editor.suggest.preview": true,
+    "editor.acceptSuggestionOnEnter": "on",
+    "editor.snippetSuggestions": "top",
+    "workbench.iconTheme": "material-icon-theme",
+    "editor.wordWrap": "on",
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "workbench.editorAssociations": {
+      "*.html": "default"
+    },
+
+    "sonarlint.connectedMode.connections.sonarqube": [
+      {
+        "serverUrl": "http://localhost:9000/"
+      }
+    ],
+    "sonarlint.connectedMode.project": {
+       
+      "projectKey": "test_cobranzas" 
+    }
+    
+}
